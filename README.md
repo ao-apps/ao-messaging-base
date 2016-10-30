@@ -3,6 +3,7 @@ Asynchronous bidirectional messaging over various protocols base for implementat
 
 ## Project Links
 * [Project Home](https://www.aoindustries.com/ao-messaging/base/)
+* [Changelog](https://www.aoindustries.com/ao-messaging/base/changelog)
 * [API Docs](https://www.aoindustries.com/ao-messaging/base/apidocs/)
 * [Maven Central Repository](https://search.maven.org/#search%7Cgav%7C1%7Cg:%22com.aoindustries%22%20AND%20a:%22ao-messaging-base%22)
 * [GitHub](https://github.com/aoindustries/ao-messaging-base)
