@@ -37,7 +37,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T20:39:38-0500"
-		dateModified="2017-07-20T03:22:11-0500"
+		dateModified="2017-08-19T18:06:54-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-messaging-base:pom.version}" />
@@ -52,7 +52,11 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			/>
+			>
+				<ol>
+					<li>New callback to check for session identifier availability.</li>
+				</ol>
+			</changelog:release>
 		</c:if>
 
 		<changelog:release

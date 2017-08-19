@@ -68,13 +68,60 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	}
 
 	/**
+	 * Something that can check the availability of a session ID, to skip used session IDs when
+	 * creating new sessions.
+	 */
+	protected static interface IdentifierAvailabilityChecker {
+		boolean isIdentifierAvailable(Identifier id);
+	}
+
+	/**
+	 * All of the registered session identifier checkers.
+	 */
+	private final List<IdentifierAvailabilityChecker> idCheckers = new ArrayList<IdentifierAvailabilityChecker>();
+
+	/**
+	 * Adds a {@link IdentifierAvailabilityChecker}.
+	 */
+	protected void addIdentifierAvailabilityChecker(IdentifierAvailabilityChecker idChecker) {
+		synchronized(idCheckers) {
+			idCheckers.add(idChecker);
+		}
+	}
+
+	/**
+	 * Removes a {@link IdentifierAvailabilityChecker}.
+	 */
+	protected void removeIdentifierAvailabilityChecker(IdentifierAvailabilityChecker idChecker) {
+		synchronized(idCheckers) {
+			idCheckers.remove(idChecker);
+		}
+	}
+
+	/**
 	 * Creates a random identifier that is not in the current set of sockets.
+	 * <p>
+	 * The identifier is checked against any registered {@link IdentifierAvailabilityChecker}.
+	 * </p>
+	 * @see  #addIdentifierAvailabilityChecker(com.aoindustries.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
 	 */
 	protected Identifier newIdentifier() {
-		synchronized(sockets) {
-			while(true) {
-				Identifier id = new Identifier();
-				if(!sockets.containsKey(id)) return id;
+		while(true) {
+			Identifier id = new Identifier();
+			boolean available;
+			synchronized(sockets) {
+				available = !sockets.containsKey(id);
+			}
+			if(available) {
+				synchronized(idCheckers) {
+					for(IdentifierAvailabilityChecker idChecker : idCheckers) {
+						if(!idChecker.isIdentifierAvailable(id)) {
+							available = false;
+							break;
+						}
+					}
+				}
+				if(available) return id;
 			}
 		}
 	}
