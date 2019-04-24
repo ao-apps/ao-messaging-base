@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,7 @@ abstract public class AbstractSocket implements Socket {
 	private final Object closeLock = new Object();
 	private Long closeTime;
 
-	private final ConcurrentListenerManager<SocketListener> listenerManager = new ConcurrentListenerManager<SocketListener>();
+	private final ConcurrentListenerManager<SocketListener> listenerManager = new ConcurrentListenerManager<>();
 
 	protected AbstractSocket(
 		AbstractSocketContext<? extends AbstractSocket> socketContext,

@@ -37,7 +37,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T20:39:38-0500"
-		dateModified="2017-08-19T18:06:54-0500"
+		dateModified="2019-04-24T18:15:18-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-messaging-base:pom.version}" />
@@ -54,6 +54,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 				scmUrl="@{documented.scm.url}"
 			>
 				<ol>
+					<li>Minimum Java version changed from 1.6 to 1.7.</li>
 					<li>New callback to check for session identifier availability.</li>
 				</ol>
 			</changelog:release>

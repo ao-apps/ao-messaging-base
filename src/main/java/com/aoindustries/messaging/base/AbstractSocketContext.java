@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,12 +43,12 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 
 	private static final Logger logger = Logger.getLogger(AbstractSocketContext.class.getName());
 
-	private final Map<Identifier,S> sockets = new LinkedHashMap<Identifier,S>();
+	private final Map<Identifier,S> sockets = new LinkedHashMap<>();
 
 	private final Object closeLock = new Object();
 	private boolean closed;
 
-	private final ConcurrentListenerManager<SocketContextListener> listenerManager = new ConcurrentListenerManager<SocketContextListener>();
+	private final ConcurrentListenerManager<SocketContextListener> listenerManager = new ConcurrentListenerManager<>();
 
 	protected AbstractSocketContext() {
 	}
@@ -78,7 +78,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	/**
 	 * All of the registered session identifier checkers.
 	 */
-	private final List<IdentifierAvailabilityChecker> idCheckers = new ArrayList<IdentifierAvailabilityChecker>();
+	private final List<IdentifierAvailabilityChecker> idCheckers = new ArrayList<>();
 
 	/**
 	 * Adds a {@link IdentifierAvailabilityChecker}.
@@ -153,7 +153,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 		List<S> socketsToClose;
 		synchronized(sockets) {
 			// Gets a copy of the sockets to avoid concurrent modification exception and avoid holding lock
-			socketsToClose = new ArrayList<S>(sockets.values());
+			socketsToClose = new ArrayList<>(sockets.values());
 			// Each will be removed from socket.close() below: sockets.clear();
 		}
 		for(S socket : socketsToClose) {
