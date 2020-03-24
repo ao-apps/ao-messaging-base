@@ -22,11 +22,11 @@
  */
 package com.aoindustries.messaging.base;
 
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.concurrent.ConcurrentListenerManager;
 import com.aoindustries.messaging.SocketContext;
 import com.aoindustries.messaging.SocketContextListener;
 import com.aoindustries.security.Identifier;
-import com.aoindustries.util.AoCollections;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
