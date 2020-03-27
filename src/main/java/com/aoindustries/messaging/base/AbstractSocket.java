@@ -124,21 +124,7 @@ abstract public class AbstractSocket implements Socket {
 			if(!newRemoteSocketAddress.equals(oldRemoteSocketAddress)) {
 				this.remoteSocketAddress = newRemoteSocketAddress;
 				listenerManager.enqueueEvent(
-					new ConcurrentListenerManager.Event<SocketListener>() {
-						@Override
-						public Runnable createCall(final SocketListener listener) {
-							return new Runnable() {
-								@Override
-								public void run() {
-									listener.onRemoteSocketAddressChange(
-										AbstractSocket.this,
-										oldRemoteSocketAddress,
-										newRemoteSocketAddress
-									);
-								}
-							};
-						}
-					}
+					(SocketListener listener) -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
 				);
 			}
 		}
@@ -176,17 +162,7 @@ abstract public class AbstractSocket implements Socket {
 		}
 		if(enqueueOnSocketClose) {
 			Future<?> future = listenerManager.enqueueEvent(
-				new ConcurrentListenerManager.Event<SocketListener>() {
-					@Override
-					public Runnable createCall(final SocketListener listener) {
-						return new Runnable() {
-							@Override
-							public void run() {
-								listener.onSocketClose(AbstractSocket.this);
-							}
-						};
-					}
-				}
+				(SocketListener listener) -> () -> listener.onSocketClose(this)
 			);
 			try {
 				logger.log(Level.FINE, "Waiting for calls to onSocketClose to complete");
@@ -229,20 +205,7 @@ abstract public class AbstractSocket implements Socket {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		if(messages.isEmpty()) throw new IllegalArgumentException("messages may not be empty");
 		return listenerManager.enqueueEvent(
-			new ConcurrentListenerManager.Event<SocketListener>() {
-				@Override
-				public Runnable createCall(final SocketListener listener) {
-					return new Runnable() {
-						@Override
-						public void run() {
-							listener.onMessages(
-								AbstractSocket.this,
-								messages
-							);
-						}
-					};
-				}
-			}
+			(SocketListener listener) -> () -> listener.onMessages(this, messages)
 		);
 	}
 
@@ -256,20 +219,7 @@ abstract public class AbstractSocket implements Socket {
 	protected Future<?> callOnError(final Exception exc) throws IllegalStateException {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		return listenerManager.enqueueEvent(
-			new ConcurrentListenerManager.Event<SocketListener>() {
-				@Override
-				public Runnable createCall(final SocketListener listener) {
-					return new Runnable() {
-						@Override
-						public void run() {
-							listener.onError(
-								AbstractSocket.this,
-								exc
-							);
-						}
-					};
-				}
-			}
+			(SocketListener listener) -> () -> listener.onError(this, exc)
 		);
 	}
 

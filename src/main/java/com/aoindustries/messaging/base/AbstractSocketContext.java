@@ -165,17 +165,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 		}
 		if(enqueueOnSocketContextClose) {
 			Future<?> future = listenerManager.enqueueEvent(
-				new ConcurrentListenerManager.Event<SocketContextListener>() {
-					@Override
-					public Runnable createCall(final SocketContextListener listener) {
-						return new Runnable() {
-							@Override
-							public void run() {
-								listener.onSocketContextClose(AbstractSocketContext.this);
-							}
-						};
-					}
-				}
+				(SocketContextListener listener) -> () -> listener.onSocketContextClose(this)
 			);
 			try {
 				future.get();
@@ -227,17 +217,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 			if(sockets.containsKey(id)) throw new IllegalStateException("Socket with the same ID has already been added");
 			sockets.put(id, newSocket);
 			future = listenerManager.enqueueEvent(
-				new ConcurrentListenerManager.Event<SocketContextListener>() {
-					@Override
-					public Runnable createCall(final SocketContextListener listener) {
-						return new Runnable() {
-							@Override
-							public void run() {
-								listener.onNewSocket(AbstractSocketContext.this, newSocket);
-							}
-						};
-					}
-				}
+				(SocketContextListener listener) -> () -> listener.onNewSocket(this, newSocket)
 			);
 		}
 		try {
@@ -261,20 +241,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	protected Future<?> callOnError(final Exception exc) throws IllegalStateException {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		return listenerManager.enqueueEvent(
-			new ConcurrentListenerManager.Event<SocketContextListener>() {
-				@Override
-				public Runnable createCall(final SocketContextListener listener) {
-					return new Runnable() {
-						@Override
-						public void run() {
-							listener.onError(
-								AbstractSocketContext.this,
-								exc
-							);
-						}
-					};
-				}
-			}
+			(SocketContextListener listener) -> () -> listener.onError(this, exc)
 		);
 	}
 }
