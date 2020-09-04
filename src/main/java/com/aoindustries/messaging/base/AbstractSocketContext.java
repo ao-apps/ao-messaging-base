@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -140,6 +139,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	 * Any overriding implementation must call super.close() first.
 	 */
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void close() {
 		boolean enqueueOnSocketContextClose;
 		synchronized(closeLock) {
@@ -159,22 +159,28 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 		for(S socket : socketsToClose) {
 			try {
 				socket.close();
-			} catch(Exception exc) {
-				logger.log(Level.SEVERE, null, exc);
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				logger.log(Level.SEVERE, null, t);
 			}
 		}
 		if(enqueueOnSocketContextClose) {
+			logger.log(Level.FINE, "Enqueuing onSocketContextClose: {0}", this);
 			Future<?> future = listenerManager.enqueueEvent(
 				(SocketContextListener listener) -> () -> listener.onSocketContextClose(this)
 			);
 			try {
+				logger.log(Level.FINER, "Waiting for onSocketContextClose: {0}", this);
 				future.get();
-			} catch(ExecutionException e) {
-				logger.log(Level.SEVERE, null, e);
+				logger.log(Level.FINER, "Finished onSocketContextClose: {0}", this);
 			} catch(InterruptedException e) {
-				logger.log(Level.SEVERE, null, e);
-				// Restore the interrupted status
+				logger.log(Level.FINE, null, e);
 				Thread.currentThread().interrupt();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				logger.log(Level.SEVERE, null, t);
 			}
 		}
 		listenerManager.close();
@@ -209,8 +215,10 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	 * Second, calls all listeners notifying them of new socket.
 	 * Third, waits for all listeners to handle the event before returning.
 	 */
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	protected void addSocket(final S newSocket) {
 		if(isClosed()) throw new IllegalStateException("SocketContext is closed");
+		logger.log(Level.FINE, "Enqueuing onNewSocket: {0}, {1}", new Object[]{this, newSocket});
 		Future<?> future;
 		synchronized(sockets) {
 			Identifier id = newSocket.getId();
@@ -221,13 +229,16 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 			);
 		}
 		try {
+			logger.log(Level.FINER, "Waiting for onNewSocket: {0}, {1}", new Object[]{this, newSocket});
 			future.get();
-		} catch(ExecutionException e) {
-			logger.log(Level.SEVERE, null, e);
+			logger.log(Level.FINER, "Finished onNewSocket: {0}, {1}", new Object[]{this, newSocket});
 		} catch(InterruptedException e) {
-			logger.log(Level.SEVERE, null, e);
-			// Restore the interrupted status
+			logger.log(Level.FINE, null, e);
 			Thread.currentThread().interrupt();
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			logger.log(Level.SEVERE, null, t);
 		}
 	}
 
@@ -238,10 +249,11 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	 *
 	 * @throws  IllegalStateException  if this socket is closed
 	 */
-	protected Future<?> callOnError(final Exception exc) throws IllegalStateException {
+	protected Future<?> callOnError(Throwable t) throws IllegalStateException {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
+		logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
 		return listenerManager.enqueueEvent(
-			(SocketContextListener listener) -> () -> listener.onError(this, exc)
+			(SocketContextListener listener) -> () -> listener.onError(this, t)
 		);
 	}
 }

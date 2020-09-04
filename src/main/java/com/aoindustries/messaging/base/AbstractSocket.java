@@ -33,7 +33,6 @@ import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,8 +43,6 @@ import java.util.logging.Logger;
 abstract public class AbstractSocket implements Socket {
 
 	private static final Logger logger = Logger.getLogger(AbstractSocket.class.getName());
-
-	private static final boolean DEBUG = false;
 
 	private final AbstractSocketContext<? extends AbstractSocket> socketContext;
 
@@ -123,6 +120,7 @@ abstract public class AbstractSocket implements Socket {
 			final SocketAddress oldRemoteSocketAddress = this.remoteSocketAddress;
 			if(!newRemoteSocketAddress.equals(oldRemoteSocketAddress)) {
 				this.remoteSocketAddress = newRemoteSocketAddress;
+				logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[]{this, oldRemoteSocketAddress, newRemoteSocketAddress});
 				listenerManager.enqueueEvent(
 					(SocketListener listener) -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
 				);
@@ -138,7 +136,7 @@ abstract public class AbstractSocket implements Socket {
 	@Override
 	public void start(
 		Callback<? super Socket> onStart,
-		Callback<? super Exception> onError
+		Callback<? super Throwable> onError
 	) throws IllegalStateException {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		startImpl(onStart, onError);
@@ -148,11 +146,13 @@ abstract public class AbstractSocket implements Socket {
 	 * Any overriding implementation must call super.close() first.
 	 */
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void close() throws IOException {
 		boolean enqueueOnSocketClose;
 		synchronized(closeLock) {
 			if(closeTime == null) {
 				// Remove this from the context
+				logger.log(Level.FINE, "Calling onClose: {0}", this);
 				socketContext.onClose(this);
 				closeTime = System.currentTimeMillis();
 				enqueueOnSocketClose = true;
@@ -161,19 +161,21 @@ abstract public class AbstractSocket implements Socket {
 			}
 		}
 		if(enqueueOnSocketClose) {
+			logger.log(Level.FINE, "Enqueuing onSocketClose: {0}", this);
 			Future<?> future = listenerManager.enqueueEvent(
 				(SocketListener listener) -> () -> listener.onSocketClose(this)
 			);
 			try {
-				logger.log(Level.FINE, "Waiting for calls to onSocketClose to complete");
+				logger.log(Level.FINER, "Waiting for onSocketClose: {0}", this);
 				future.get();
-				logger.log(Level.FINE, "All calls to onSocketClose finished");
-			} catch(ExecutionException e) {
-				logger.log(Level.SEVERE, null, e);
+				logger.log(Level.FINER, "Finished onSocketClose: {0}", this);
 			} catch(InterruptedException e) {
-				logger.log(Level.SEVERE, null, e);
-				// Restore the interrupted status
+				logger.log(Level.FINE, null, e);
 				Thread.currentThread().interrupt();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				logger.log(Level.SEVERE, null, t);
 			}
 		}
 		listenerManager.close();
@@ -203,7 +205,9 @@ abstract public class AbstractSocket implements Socket {
 	 */
 	protected Future<?> callOnMessages(final List<? extends Message> messages) throws IllegalStateException {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
-		if(messages.isEmpty()) throw new IllegalArgumentException("messages may not be empty");
+		int size = messages.size();
+		if(size == 0) throw new IllegalArgumentException("messages may not be empty");
+		logger.log(Level.FINE, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
 		return listenerManager.enqueueEvent(
 			(SocketListener listener) -> () -> listener.onMessages(this, messages)
 		);
@@ -216,24 +220,24 @@ abstract public class AbstractSocket implements Socket {
 	 *
 	 * @throws  IllegalStateException  if this socket is closed
 	 */
-	protected Future<?> callOnError(final Exception exc) throws IllegalStateException {
+	protected Future<?> callOnError(Throwable t) throws IllegalStateException {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
+		logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
 		return listenerManager.enqueueEvent(
-			(SocketListener listener) -> () -> listener.onError(this, exc)
+			(SocketListener listener) -> () -> listener.onError(this, t)
 		);
 	}
 
 	@Override
 	public void sendMessage(Message message) throws IllegalStateException {
-		if(DEBUG) System.err.println("AbstractSocket: sendMessage: message=" + message);
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		sendMessages(Collections.singletonList(message));
 	}
 
 	@Override
 	public void sendMessages(Collection<? extends Message> messages) throws IllegalStateException {
-		if(DEBUG) System.err.println("AbstractSocket: sendMessages: messages=" + messages);
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
+		logger.log(Level.FINEST, "messages = {0}", messages);
 		if(!messages.isEmpty()) sendMessagesImpl(messages);
 	}
 
@@ -249,7 +253,7 @@ abstract public class AbstractSocket implements Socket {
 	 */
 	abstract protected void startImpl(
 		Callback<? super Socket> onStart,
-		Callback<? super Exception> onError
+		Callback<? super Throwable> onError
 	) throws IllegalStateException;
 
 	/**
