@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,7 +42,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 
 	private static final Logger logger = Logger.getLogger(AbstractSocketContext.class.getName());
 
-	private final Map<Identifier,S> sockets = new LinkedHashMap<>();
+	private final Map<Identifier, S> sockets = new LinkedHashMap<>();
 
 	private final Object closeLock = new Object();
 	private boolean closed;
@@ -53,7 +53,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	}
 
 	@Override
-	public Map<Identifier,S> getSockets() {
+	public Map<Identifier, S> getSockets() {
 		synchronized(sockets) {
 			return AoCollections.unmodifiableCopyMap(sockets);
 		}
