@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
-Copyright (C) 2016, 2017, 2019, 2020  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2019, 2020, 2021  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -36,7 +36,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		title="@{documented.name} Changelog"
 		shortTitle="Changelog"
 		tocLevels="1"
-		datePublished="2016-10-29T20:39:38-0500"
+		datePublished="2016-10-29T20:39:38-05:00"
 		dateModified="2020-11-25T06:51:22-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
@@ -94,7 +94,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.1.1"
-			datePublished="2019-06-21T04:39:25-0500"
+			datePublished="2019-06-21T04:39:25-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -112,7 +112,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.1.0"
-			datePublished="2019-04-24T19:08:30-0500"
+			datePublished="2019-04-24T19:08:30-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -126,7 +126,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.0.3"
-			datePublished="2017-07-20T03:22:11-0500"
+			datePublished="2017-07-20T03:22:11-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -139,7 +139,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.0.2"
-			datePublished="2016-11-16T00:44:55-0600"
+			datePublished="2016-11-16T00:44:55-06:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -154,7 +154,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.0.1"
-			datePublished="2016-10-20T18:26:00-0500"
+			datePublished="2016-10-20T18:26:00-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -168,7 +168,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{documented.name}"
 			version="1.0.0"
-			datePublished="2016-10-09T22:01:00-0500"
+			datePublished="2016-10-09T22:01:00-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
