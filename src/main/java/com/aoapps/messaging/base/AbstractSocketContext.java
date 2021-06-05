@@ -20,13 +20,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.messaging.base;
+package com.aoapps.messaging.base;
 
-import com.aoindustries.collections.AoCollections;
-import com.aoindustries.concurrent.ConcurrentListenerManager;
-import com.aoindustries.messaging.SocketContext;
-import com.aoindustries.messaging.SocketContextListener;
-import com.aoindustries.security.Identifier;
+import com.aoapps.collections.AoCollections;
+import com.aoapps.concurrent.ConcurrentListenerManager;
+import com.aoapps.messaging.SocketContext;
+import com.aoapps.messaging.SocketContextListener;
+import com.aoapps.security.Identifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -102,7 +102,7 @@ abstract public class AbstractSocketContext<S extends AbstractSocket> implements
 	 * <p>
 	 * The identifier is checked against any registered {@link IdentifierAvailabilityChecker}.
 	 * </p>
-	 * @see  #addIdentifierAvailabilityChecker(com.aoindustries.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
+	 * @see  #addIdentifierAvailabilityChecker(com.aoapps.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
 	 */
 	protected Identifier newIdentifier() {
 		while(true) {

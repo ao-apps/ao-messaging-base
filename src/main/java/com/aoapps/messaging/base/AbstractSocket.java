@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,14 +20,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.messaging.base;
+package com.aoapps.messaging.base;
 
-import com.aoindustries.concurrent.Callback;
-import com.aoindustries.concurrent.ConcurrentListenerManager;
-import com.aoindustries.messaging.Message;
-import com.aoindustries.messaging.Socket;
-import com.aoindustries.messaging.SocketListener;
-import com.aoindustries.security.Identifier;
+import com.aoapps.concurrent.Callback;
+import com.aoapps.concurrent.ConcurrentListenerManager;
+import com.aoapps.messaging.Message;
+import com.aoapps.messaging.Socket;
+import com.aoapps.messaging.SocketListener;
+import com.aoapps.security.Identifier;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.Collection;
@@ -131,7 +131,7 @@ abstract public class AbstractSocket implements Socket {
 	/**
 	 * Makes sure the socket is not already closed then calls startImpl.
 	 * 
-	 * @see  #startImpl(com.aoindustries.concurrent.Callback, com.aoindustries.concurrent.Callback)
+	 * @see  #startImpl(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
 	 */
 	@Override
 	public void start(
@@ -247,7 +247,7 @@ abstract public class AbstractSocket implements Socket {
 	/**
 	 * Called once the socket is confirmed to not be closed.
 	 * 
-	 * @see  #start(com.aoindustries.concurrent.Callback, com.aoindustries.concurrent.Callback)
+	 * @see  #start(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
 	 *
 	 * @throws IllegalStateException  if already started
 	 */
