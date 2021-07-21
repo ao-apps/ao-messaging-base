@@ -37,7 +37,7 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T20:39:38-05:00"
-		dateModified="2021-07-20T23:50:34-05:00"
+		dateModified="2021-07-21T03:29:15-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -133,10 +133,10 @@ along with ao-messaging-base.  If not, see <http://www.gnu.org/licenses />.
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
-			<ol>
+			<ul>
 				<li>Minimum Java version changed from 1.6 to 1.7.</li>
 				<li>New callback to check for session identifier availability.</li>
-			</ol>
+			</ul>
 		</changelog:release>
 
 		<changelog:release
