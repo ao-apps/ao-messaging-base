@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 /**
  * Base implementation of socket.
  */
-abstract public class AbstractSocket implements Socket {
+public abstract class AbstractSocket implements Socket {
 
 	private static final Logger logger = Logger.getLogger(AbstractSocket.class.getName());
 
@@ -242,7 +242,7 @@ abstract public class AbstractSocket implements Socket {
 	}
 
 	@Override
-	abstract public String getProtocol();
+	public abstract String getProtocol();
 
 	/**
 	 * Called once the socket is confirmed to not be closed.
@@ -251,7 +251,7 @@ abstract public class AbstractSocket implements Socket {
 	 *
 	 * @throws IllegalStateException  if already started
 	 */
-	abstract protected void startImpl(
+	protected abstract void startImpl(
 		Callback<? super Socket> onStart,
 		Callback<? super Throwable> onError
 	) throws IllegalStateException;
@@ -260,5 +260,5 @@ abstract public class AbstractSocket implements Socket {
 	 * Implementation to actually enqueue and send messages.
 	 * This must never block.
 	 */
-	abstract protected void sendMessagesImpl(Collection<? extends Message> messages);
+	protected abstract void sendMessagesImpl(Collection<? extends Message> messages);
 }

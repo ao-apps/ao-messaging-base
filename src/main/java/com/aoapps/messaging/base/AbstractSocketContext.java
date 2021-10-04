@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 /**
  * Base implementation of socket context.
  */
-abstract public class AbstractSocketContext<S extends AbstractSocket> implements SocketContext {
+public abstract class AbstractSocketContext<S extends AbstractSocket> implements SocketContext {
 
 	private static final Logger logger = Logger.getLogger(AbstractSocketContext.class.getName());
 
