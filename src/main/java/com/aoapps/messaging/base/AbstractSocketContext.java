@@ -176,6 +176,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 				logger.log(Level.FINER, "Finished onSocketContextClose: {0}", this);
 			} catch(InterruptedException e) {
 				logger.log(Level.FINE, null, e);
+				// Restore the interrupted status
 				Thread.currentThread().interrupt();
 			} catch(ThreadDeath td) {
 				throw td;
@@ -234,6 +235,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 			logger.log(Level.FINER, "Finished onNewSocket: {0}, {1}", new Object[]{this, newSocket});
 		} catch(InterruptedException e) {
 			logger.log(Level.FINE, null, e);
+			// Restore the interrupted status
 			Thread.currentThread().interrupt();
 		} catch(ThreadDeath td) {
 			throw td;

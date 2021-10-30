@@ -130,7 +130,7 @@ public abstract class AbstractSocket implements Socket {
 
 	/**
 	 * Makes sure the socket is not already closed then calls startImpl.
-	 * 
+	 *
 	 * @see  #startImpl(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
 	 */
 	@Override
@@ -171,6 +171,7 @@ public abstract class AbstractSocket implements Socket {
 				logger.log(Level.FINER, "Finished onSocketClose: {0}", this);
 			} catch(InterruptedException e) {
 				logger.log(Level.FINE, null, e);
+				// Restore the interrupted status
 				Thread.currentThread().interrupt();
 			} catch(ThreadDeath td) {
 				throw td;
@@ -246,7 +247,7 @@ public abstract class AbstractSocket implements Socket {
 
 	/**
 	 * Called once the socket is confirmed to not be closed.
-	 * 
+	 *
 	 * @see  #start(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
 	 *
 	 * @throws IllegalStateException  if already started
