@@ -122,7 +122,7 @@ public abstract class AbstractSocket implements Socket {
 				this.remoteSocketAddress = newRemoteSocketAddress;
 				logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[]{this, oldRemoteSocketAddress, newRemoteSocketAddress});
 				listenerManager.enqueueEvent(
-					(SocketListener listener) -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
+					listener -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
 				);
 			}
 		}
@@ -163,7 +163,7 @@ public abstract class AbstractSocket implements Socket {
 		if(enqueueOnSocketClose) {
 			logger.log(Level.FINE, "Enqueuing onSocketClose: {0}", this);
 			Future<?> future = listenerManager.enqueueEvent(
-				(SocketListener listener) -> () -> listener.onSocketClose(this)
+				listener -> () -> listener.onSocketClose(this)
 			);
 			try {
 				logger.log(Level.FINER, "Waiting for onSocketClose: {0}", this);
@@ -210,7 +210,7 @@ public abstract class AbstractSocket implements Socket {
 		if(size == 0) throw new IllegalArgumentException("messages may not be empty");
 		logger.log(Level.FINE, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
 		return listenerManager.enqueueEvent(
-			(SocketListener listener) -> () -> listener.onMessages(this, messages)
+			listener -> () -> listener.onMessages(this, messages)
 		);
 	}
 
@@ -225,7 +225,7 @@ public abstract class AbstractSocket implements Socket {
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
 		return listenerManager.enqueueEvent(
-			(SocketListener listener) -> () -> listener.onError(this, t)
+			listener -> () -> listener.onError(this, t)
 		);
 	}
 

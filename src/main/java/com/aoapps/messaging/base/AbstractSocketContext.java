@@ -168,7 +168,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 		if(enqueueOnSocketContextClose) {
 			logger.log(Level.FINE, "Enqueuing onSocketContextClose: {0}", this);
 			Future<?> future = listenerManager.enqueueEvent(
-				(SocketContextListener listener) -> () -> listener.onSocketContextClose(this)
+				listener -> () -> listener.onSocketContextClose(this)
 			);
 			try {
 				logger.log(Level.FINER, "Waiting for onSocketContextClose: {0}", this);
@@ -226,7 +226,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 			if(sockets.containsKey(id)) throw new IllegalStateException("Socket with the same ID has already been added");
 			sockets.put(id, newSocket);
 			future = listenerManager.enqueueEvent(
-				(SocketContextListener listener) -> () -> listener.onNewSocket(this, newSocket)
+				listener -> () -> listener.onNewSocket(this, newSocket)
 			);
 		}
 		try {
@@ -255,7 +255,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 		if(isClosed()) throw new IllegalStateException("Socket is closed");
 		logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
 		return listenerManager.enqueueEvent(
-			(SocketContextListener listener) -> () -> listener.onError(this, t)
+			listener -> () -> listener.onError(this, t)
 		);
 	}
 }
