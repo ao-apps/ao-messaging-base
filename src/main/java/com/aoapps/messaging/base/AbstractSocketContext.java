@@ -50,6 +50,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 	private final ConcurrentListenerManager<SocketContextListener> listenerManager = new ConcurrentListenerManager<>();
 
 	protected AbstractSocketContext() {
+		// Do nothing
 	}
 
 	@Override
