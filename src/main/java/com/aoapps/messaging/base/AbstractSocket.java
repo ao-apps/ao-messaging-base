@@ -43,224 +43,238 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractSocket implements Socket {
 
-	private static final Logger logger = Logger.getLogger(AbstractSocket.class.getName());
+  private static final Logger logger = Logger.getLogger(AbstractSocket.class.getName());
 
-	private final AbstractSocketContext<? extends AbstractSocket> socketContext;
+  private final AbstractSocketContext<? extends AbstractSocket> socketContext;
 
-	private final Identifier id;
+  private final Identifier id;
 
-	private final long connectTime;
+  private final long connectTime;
 
-	private final    SocketAddress connectRemoteSocketAddress;
-	private final    Object        remoteSocketAddressLock = new Object();
-	private          SocketAddress remoteSocketAddress;
+  private final    SocketAddress connectRemoteSocketAddress;
+  private final    Object        remoteSocketAddressLock = new Object();
+  private          SocketAddress remoteSocketAddress;
 
-	private final Object closeLock = new Object();
-	private Long closeTime;
+  private final Object closeLock = new Object();
+  private Long closeTime;
 
-	private final ConcurrentListenerManager<SocketListener> listenerManager = new ConcurrentListenerManager<>();
+  private final ConcurrentListenerManager<SocketListener> listenerManager = new ConcurrentListenerManager<>();
 
-	protected AbstractSocket(
-		AbstractSocketContext<? extends AbstractSocket> socketContext,
-		Identifier id,
-		long connectTime,
-		SocketAddress remoteSocketAddress
-	) {
-		this.socketContext              = socketContext;
-		this.id                         = id;
-		this.connectTime                = connectTime;
-		this.connectRemoteSocketAddress = remoteSocketAddress;
-		this.remoteSocketAddress        = remoteSocketAddress;
-	}
+  protected AbstractSocket(
+    AbstractSocketContext<? extends AbstractSocket> socketContext,
+    Identifier id,
+    long connectTime,
+    SocketAddress remoteSocketAddress
+  ) {
+    this.socketContext              = socketContext;
+    this.id                         = id;
+    this.connectTime                = connectTime;
+    this.connectRemoteSocketAddress = remoteSocketAddress;
+    this.remoteSocketAddress        = remoteSocketAddress;
+  }
 
-	@Override
-	public String toString() {
-		return getRemoteSocketAddress().toString();
-	}
+  @Override
+  public String toString() {
+    return getRemoteSocketAddress().toString();
+  }
 
-	@Override
-	public AbstractSocketContext<? extends AbstractSocket> getSocketContext() {
-		return socketContext;
-	}
+  @Override
+  public AbstractSocketContext<? extends AbstractSocket> getSocketContext() {
+    return socketContext;
+  }
 
-	@Override
-	public Identifier getId() {
-		return id;
-	}
+  @Override
+  public Identifier getId() {
+    return id;
+  }
 
-	@Override
-	public long getConnectTime() {
-		return connectTime;
-	}
+  @Override
+  public long getConnectTime() {
+    return connectTime;
+  }
 
-	@Override
-	public Long getCloseTime() {
-		synchronized(closeLock) {
-			return closeTime;
-		}
-	}
+  @Override
+  public Long getCloseTime() {
+    synchronized (closeLock) {
+      return closeTime;
+    }
+  }
 
-	@Override
-	public SocketAddress getConnectRemoteSocketAddress() {
-		return connectRemoteSocketAddress;
-	}
+  @Override
+  public SocketAddress getConnectRemoteSocketAddress() {
+    return connectRemoteSocketAddress;
+  }
 
-	@Override
-	public SocketAddress getRemoteSocketAddress() {
-		synchronized(remoteSocketAddressLock) {
-			return remoteSocketAddress;
-		}
-	}
+  @Override
+  public SocketAddress getRemoteSocketAddress() {
+    synchronized (remoteSocketAddressLock) {
+      return remoteSocketAddress;
+    }
+  }
 
-	/**
-	 * Sets the most recently seen remote address.
-	 * If the provided value is different than the previous, will notify all listeners.
-	 */
-	protected void setRemoteSocketAddress(final SocketAddress newRemoteSocketAddress) {
-		synchronized(remoteSocketAddressLock) {
-			final SocketAddress oldRemoteSocketAddress = this.remoteSocketAddress;
-			if(!newRemoteSocketAddress.equals(oldRemoteSocketAddress)) {
-				this.remoteSocketAddress = newRemoteSocketAddress;
-				logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[]{this, oldRemoteSocketAddress, newRemoteSocketAddress});
-				listenerManager.enqueueEvent(
-					listener -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
-				);
-			}
-		}
-	}
+  /**
+   * Sets the most recently seen remote address.
+   * If the provided value is different than the previous, will notify all listeners.
+   */
+  protected void setRemoteSocketAddress(final SocketAddress newRemoteSocketAddress) {
+    synchronized (remoteSocketAddressLock) {
+      final SocketAddress oldRemoteSocketAddress = this.remoteSocketAddress;
+      if (!newRemoteSocketAddress.equals(oldRemoteSocketAddress)) {
+        this.remoteSocketAddress = newRemoteSocketAddress;
+        logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[]{this, oldRemoteSocketAddress, newRemoteSocketAddress});
+        listenerManager.enqueueEvent(
+          listener -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
+        );
+      }
+    }
+  }
 
-	/**
-	 * Makes sure the socket is not already closed then calls startImpl.
-	 *
-	 * @see  #startImpl(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
-	 */
-	@Override
-	public void start(
-		Callback<? super Socket> onStart,
-		Callback<? super Throwable> onError
-	) throws IllegalStateException {
-		if(isClosed()) throw new IllegalStateException("Socket is closed");
-		startImpl(onStart, onError);
-	}
+  /**
+   * Makes sure the socket is not already closed then calls startImpl.
+   *
+   * @see  #startImpl(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
+   */
+  @Override
+  public void start(
+    Callback<? super Socket> onStart,
+    Callback<? super Throwable> onError
+  ) throws IllegalStateException {
+    if (isClosed()) {
+      throw new IllegalStateException("Socket is closed");
+    }
+    startImpl(onStart, onError);
+  }
 
-	/**
-	 * Any overriding implementation must call super.close() first.
-	 */
-	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public void close() throws IOException {
-		boolean enqueueOnSocketClose;
-		synchronized(closeLock) {
-			if(closeTime == null) {
-				// Remove this from the context
-				logger.log(Level.FINE, "Calling onClose: {0}", this);
-				socketContext.onClose(this);
-				closeTime = System.currentTimeMillis();
-				enqueueOnSocketClose = true;
-			} else {
-				enqueueOnSocketClose = false;
-			}
-		}
-		if(enqueueOnSocketClose) {
-			logger.log(Level.FINE, "Enqueuing onSocketClose: {0}", this);
-			Future<?> future = listenerManager.enqueueEvent(
-				listener -> () -> listener.onSocketClose(this)
-			);
-			try {
-				logger.log(Level.FINER, "Waiting for onSocketClose: {0}", this);
-				future.get();
-				logger.log(Level.FINER, "Finished onSocketClose: {0}", this);
-			} catch(InterruptedException e) {
-				logger.log(Level.FINE, null, e);
-				// Restore the interrupted status
-				Thread.currentThread().interrupt();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t) {
-				logger.log(Level.SEVERE, null, t);
-			}
-		}
-		listenerManager.close();
-	}
+  /**
+   * Any overriding implementation must call super.close() first.
+   */
+  @Override
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  public void close() throws IOException {
+    boolean enqueueOnSocketClose;
+    synchronized (closeLock) {
+      if (closeTime == null) {
+        // Remove this from the context
+        logger.log(Level.FINE, "Calling onClose: {0}", this);
+        socketContext.onClose(this);
+        closeTime = System.currentTimeMillis();
+        enqueueOnSocketClose = true;
+      } else {
+        enqueueOnSocketClose = false;
+      }
+    }
+    if (enqueueOnSocketClose) {
+      logger.log(Level.FINE, "Enqueuing onSocketClose: {0}", this);
+      Future<?> future = listenerManager.enqueueEvent(
+        listener -> () -> listener.onSocketClose(this)
+      );
+      try {
+        logger.log(Level.FINER, "Waiting for onSocketClose: {0}", this);
+        future.get();
+        logger.log(Level.FINER, "Finished onSocketClose: {0}", this);
+      } catch (InterruptedException e) {
+        logger.log(Level.FINE, null, e);
+        // Restore the interrupted status
+        Thread.currentThread().interrupt();
+      } catch (ThreadDeath td) {
+        throw td;
+      } catch (Throwable t) {
+        logger.log(Level.SEVERE, null, t);
+      }
+    }
+    listenerManager.close();
+  }
 
-	@Override
-	public boolean isClosed() {
-		return getCloseTime() != null;
-	}
+  @Override
+  public boolean isClosed() {
+    return getCloseTime() != null;
+  }
 
-	@Override
-	public void addSocketListener(SocketListener listener, boolean synchronous) throws IllegalStateException {
-		listenerManager.addListener(listener, synchronous);
-	}
+  @Override
+  public void addSocketListener(SocketListener listener, boolean synchronous) throws IllegalStateException {
+    listenerManager.addListener(listener, synchronous);
+  }
 
-	@Override
-	public boolean removeSocketListener(SocketListener listener) {
-		return listenerManager.removeListener(listener);
-	}
+  @Override
+  public boolean removeSocketListener(SocketListener listener) {
+    return listenerManager.removeListener(listener);
+  }
 
-	/**
-	 * When one or more new messages have arrived, call this to distribute to all of the listeners.
-	 * If need to wait until all of the listeners have handled the messages, can call Future.get()
-	 * or Future.isDone().
-	 *
-	 * @throws  IllegalStateException  if this socket is closed
-	 */
-	protected Future<?> callOnMessages(final List<? extends Message> messages) throws IllegalStateException {
-		if(isClosed()) throw new IllegalStateException("Socket is closed");
-		int size = messages.size();
-		if(size == 0) throw new IllegalArgumentException("messages may not be empty");
-		logger.log(Level.FINE, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
-		return listenerManager.enqueueEvent(
-			listener -> () -> listener.onMessages(this, messages)
-		);
-	}
+  /**
+   * When one or more new messages have arrived, call this to distribute to all of the listeners.
+   * If need to wait until all of the listeners have handled the messages, can call Future.get()
+   * or Future.isDone().
+   *
+   * @throws  IllegalStateException  if this socket is closed
+   */
+  protected Future<?> callOnMessages(final List<? extends Message> messages) throws IllegalStateException {
+    if (isClosed()) {
+      throw new IllegalStateException("Socket is closed");
+    }
+    int size = messages.size();
+    if (size == 0) {
+      throw new IllegalArgumentException("messages may not be empty");
+    }
+    logger.log(Level.FINE, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
+    return listenerManager.enqueueEvent(
+      listener -> () -> listener.onMessages(this, messages)
+    );
+  }
 
-	/**
-	 * When an error as occurred, call this to distribute to all of the listeners.
-	 * If need to wait until all of the listeners have handled the error, can call Future.get()
-	 * or Future.isDone().
-	 *
-	 * @throws  IllegalStateException  if this socket is closed
-	 */
-	protected Future<?> callOnError(Throwable t) throws IllegalStateException {
-		if(isClosed()) throw new IllegalStateException("Socket is closed");
-		logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
-		return listenerManager.enqueueEvent(
-			listener -> () -> listener.onError(this, t)
-		);
-	}
+  /**
+   * When an error as occurred, call this to distribute to all of the listeners.
+   * If need to wait until all of the listeners have handled the error, can call Future.get()
+   * or Future.isDone().
+   *
+   * @throws  IllegalStateException  if this socket is closed
+   */
+  protected Future<?> callOnError(Throwable t) throws IllegalStateException {
+    if (isClosed()) {
+      throw new IllegalStateException("Socket is closed");
+    }
+    logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
+    return listenerManager.enqueueEvent(
+      listener -> () -> listener.onError(this, t)
+    );
+  }
 
-	@Override
-	public void sendMessage(Message message) throws IllegalStateException {
-		if(isClosed()) throw new IllegalStateException("Socket is closed");
-		sendMessages(Collections.singletonList(message));
-	}
+  @Override
+  public void sendMessage(Message message) throws IllegalStateException {
+    if (isClosed()) {
+      throw new IllegalStateException("Socket is closed");
+    }
+    sendMessages(Collections.singletonList(message));
+  }
 
-	@Override
-	public void sendMessages(Collection<? extends Message> messages) throws IllegalStateException {
-		if(isClosed()) throw new IllegalStateException("Socket is closed");
-		logger.log(Level.FINEST, "messages = {0}", messages);
-		if(!messages.isEmpty()) sendMessagesImpl(messages);
-	}
+  @Override
+  public void sendMessages(Collection<? extends Message> messages) throws IllegalStateException {
+    if (isClosed()) {
+      throw new IllegalStateException("Socket is closed");
+    }
+    logger.log(Level.FINEST, "messages = {0}", messages);
+    if (!messages.isEmpty()) {
+      sendMessagesImpl(messages);
+    }
+  }
 
-	@Override
-	public abstract String getProtocol();
+  @Override
+  public abstract String getProtocol();
 
-	/**
-	 * Called once the socket is confirmed to not be closed.
-	 *
-	 * @see  #start(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
-	 *
-	 * @throws IllegalStateException  if already started
-	 */
-	protected abstract void startImpl(
-		Callback<? super Socket> onStart,
-		Callback<? super Throwable> onError
-	) throws IllegalStateException;
+  /**
+   * Called once the socket is confirmed to not be closed.
+   *
+   * @see  #start(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
+   *
+   * @throws IllegalStateException  if already started
+   */
+  protected abstract void startImpl(
+    Callback<? super Socket> onStart,
+    Callback<? super Throwable> onError
+  ) throws IllegalStateException;
 
-	/**
-	 * Implementation to actually enqueue and send messages.
-	 * This must never block.
-	 */
-	protected abstract void sendMessagesImpl(Collection<? extends Message> messages);
+  /**
+   * Implementation to actually enqueue and send messages.
+   * This must never block.
+   */
+  protected abstract void sendMessagesImpl(Collection<? extends Message> messages);
 }
