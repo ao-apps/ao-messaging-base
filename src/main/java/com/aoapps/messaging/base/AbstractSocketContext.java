@@ -174,7 +174,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
     if (enqueueOnSocketContextClose) {
       logger.log(Level.FINE, "Enqueuing onSocketContextClose: {0}", this);
       Future<?> future = listenerManager.enqueueEvent(
-        listener -> () -> listener.onSocketContextClose(this)
+          listener -> () -> listener.onSocketContextClose(this)
       );
       try {
         logger.log(Level.FINER, "Waiting for onSocketContextClose: {0}", this);
@@ -238,7 +238,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
       }
       sockets.put(id, newSocket);
       future = listenerManager.enqueueEvent(
-        listener -> () -> listener.onNewSocket(this, newSocket)
+          listener -> () -> listener.onNewSocket(this, newSocket)
       );
     }
     try {
@@ -269,7 +269,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
     }
     logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
     return listenerManager.enqueueEvent(
-      listener -> () -> listener.onError(this, t)
+        listener -> () -> listener.onError(this, t)
     );
   }
 }

@@ -61,10 +61,10 @@ public abstract class AbstractSocket implements Socket {
   private final ConcurrentListenerManager<SocketListener> listenerManager = new ConcurrentListenerManager<>();
 
   protected AbstractSocket(
-    AbstractSocketContext<? extends AbstractSocket> socketContext,
-    Identifier id,
-    long connectTime,
-    SocketAddress remoteSocketAddress
+      AbstractSocketContext<? extends AbstractSocket> socketContext,
+      Identifier id,
+      long connectTime,
+      SocketAddress remoteSocketAddress
   ) {
     this.socketContext              = socketContext;
     this.id                         = id;
@@ -123,7 +123,7 @@ public abstract class AbstractSocket implements Socket {
         this.remoteSocketAddress = newRemoteSocketAddress;
         logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[]{this, oldRemoteSocketAddress, newRemoteSocketAddress});
         listenerManager.enqueueEvent(
-          listener -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
+            listener -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
         );
       }
     }
@@ -136,8 +136,8 @@ public abstract class AbstractSocket implements Socket {
    */
   @Override
   public void start(
-    Callback<? super Socket> onStart,
-    Callback<? super Throwable> onError
+      Callback<? super Socket> onStart,
+      Callback<? super Throwable> onError
   ) throws IllegalStateException {
     if (isClosed()) {
       throw new IllegalStateException("Socket is closed");
@@ -166,7 +166,7 @@ public abstract class AbstractSocket implements Socket {
     if (enqueueOnSocketClose) {
       logger.log(Level.FINE, "Enqueuing onSocketClose: {0}", this);
       Future<?> future = listenerManager.enqueueEvent(
-        listener -> () -> listener.onSocketClose(this)
+          listener -> () -> listener.onSocketClose(this)
       );
       try {
         logger.log(Level.FINER, "Waiting for onSocketClose: {0}", this);
@@ -217,7 +217,7 @@ public abstract class AbstractSocket implements Socket {
     }
     logger.log(Level.FINE, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
     return listenerManager.enqueueEvent(
-      listener -> () -> listener.onMessages(this, messages)
+        listener -> () -> listener.onMessages(this, messages)
     );
   }
 
@@ -234,7 +234,7 @@ public abstract class AbstractSocket implements Socket {
     }
     logger.log(Level.FINE, t, () -> "Enqueuing onError: " + this);
     return listenerManager.enqueueEvent(
-      listener -> () -> listener.onError(this, t)
+        listener -> () -> listener.onError(this, t)
     );
   }
 
@@ -268,8 +268,8 @@ public abstract class AbstractSocket implements Socket {
    * @throws IllegalStateException  if already started
    */
   protected abstract void startImpl(
-    Callback<? super Socket> onStart,
-    Callback<? super Throwable> onError
+      Callback<? super Socket> onStart,
+      Callback<? super Throwable> onError
   ) throws IllegalStateException;
 
   /**
