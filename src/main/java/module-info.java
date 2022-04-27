@@ -29,4 +29,4 @@ module com.aoapps.messaging.base {
   requires com.aoapps.security; // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
   // Java SE
   requires java.logging;
-}
+} // TODO: Avoiding rewrite-maven-plugin-4.22.2 truncation
