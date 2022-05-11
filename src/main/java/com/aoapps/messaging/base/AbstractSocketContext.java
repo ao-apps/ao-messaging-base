@@ -104,6 +104,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
    * <p>
    * The identifier is checked against any registered {@link IdentifierAvailabilityChecker}.
    * </p>
+   *
    * @see  #addIdentifierAvailabilityChecker(com.aoapps.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
    */
   protected Identifier newIdentifier() {
@@ -219,10 +220,11 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
    * Adds a new socket to this context, sockets must be added to the context
    * before they create any of their own events.  This gives context listeners
    * a chance to register per-socket listeners in "onNewSocket".
-   *
-   * First, adds to the list of sockets.
-   * Second, calls all listeners notifying them of new socket.
-   * Third, waits for all listeners to handle the event before returning.
+   * <ol>
+   * <li>First, adds to the list of sockets.</li>
+   * <li>Second, calls all listeners notifying them of new socket.</li>
+   * <li>Third, waits for all listeners to handle the event before returning.</li>
+   * </ol>
    */
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
   protected void addSocket(final S newSocket) {
