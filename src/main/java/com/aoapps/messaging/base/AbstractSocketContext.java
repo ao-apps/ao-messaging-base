@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,6 +50,9 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 
   private final ConcurrentListenerManager<SocketContextListener> listenerManager = new ConcurrentListenerManager<>();
 
+  /**
+   * Creates a new {@link AbstractSocketContext}.
+   */
   protected AbstractSocketContext() {
     // Do nothing
   }
