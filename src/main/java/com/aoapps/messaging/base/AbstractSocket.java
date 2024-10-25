@@ -218,7 +218,7 @@ public abstract class AbstractSocket implements Socket {
     if (size == 0) {
       throw new IllegalArgumentException("messages may not be empty");
     }
-    logger.log(Level.FINE, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
+    logger.log(Level.FINER, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
     return listenerManager.enqueueEvent(
         listener -> () -> listener.onMessages(this, messages)
     );
