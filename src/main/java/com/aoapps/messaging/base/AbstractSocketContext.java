@@ -104,9 +104,8 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
 
   /**
    * Creates a random identifier that is not in the current set of sockets.
-   * <p>
-   * The identifier is checked against any registered {@link IdentifierAvailabilityChecker}.
-   * </p>
+   *
+   * <p>The identifier is checked against any registered {@link IdentifierAvailabilityChecker}.</p>
    *
    * @see  #addIdentifierAvailabilityChecker(com.aoapps.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
    */
