@@ -22,7 +22,7 @@ Asynchronous bidirectional messaging over various protocols base for implementat
 * [Project Home](https://oss.aoapps.com/messaging/base/)
 * [Changelog](https://oss.aoapps.com/messaging/base/changelog)
 * [API Docs](https://oss.aoapps.com/messaging/base/apidocs/)
-* [Maven Central Repository](https://central.sonatype.com/artifact/com.aoapps/ao-messaging-base)
+* [Central Repository](https://central.sonatype.com/artifact/com.aoapps/ao-messaging-base)
 * [GitHub](https://github.com/ao-apps/ao-messaging-base)
 
 ## Contact Us
