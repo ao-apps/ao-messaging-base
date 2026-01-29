@@ -135,7 +135,7 @@ public abstract class AbstractSocket implements Socket {
   /**
    * Makes sure the socket is not already closed then calls startImpl.
    *
-   * @see  #startImpl(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
+   * @see  AbstractSocket#startImpl(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
    */
   @Override
   public void start(
@@ -266,7 +266,7 @@ public abstract class AbstractSocket implements Socket {
   /**
    * Called once the socket is confirmed to not be closed.
    *
-   * @see  #start(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
+   * @see  AbstractSocket#start(com.aoapps.concurrent.Callback, com.aoapps.concurrent.Callback)
    *
    * @throws IllegalStateException  if already started
    */

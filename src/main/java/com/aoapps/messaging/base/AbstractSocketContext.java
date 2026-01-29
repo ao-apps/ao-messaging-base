@@ -107,7 +107,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
    *
    * <p>The identifier is checked against any registered {@link IdentifierAvailabilityChecker}.</p>
    *
-   * @see  #addIdentifierAvailabilityChecker(com.aoapps.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
+   * @see  AbstractSocketContext#addIdentifierAvailabilityChecker(com.aoapps.messaging.base.AbstractSocketContext.IdentifierAvailabilityChecker)
    */
   protected Identifier newIdentifier() {
     while (true) {
