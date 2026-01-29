@@ -19,3 +19,6 @@ b2672e1dea2a397918a4d7fb798a2ee77c272d55
 
 # Performed manual checkstyle clean-up
 247cec946db4c7080e203425ef51cf3e5909fbad
+
+# Workaround javadoc reproducibility limitations/bugs
+410fea3f83073389aec2a0446a4887a7ad4670cd
