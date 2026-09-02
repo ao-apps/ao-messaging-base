@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,9 +51,9 @@ public abstract class AbstractSocket implements Socket {
 
   private final long connectTime;
 
-  private final    SocketAddress connectRemoteSocketAddress;
-  private final    Object        remoteSocketAddressLock = new Object();
-  private          SocketAddress remoteSocketAddress;
+  private final SocketAddress connectRemoteSocketAddress;
+  private final Object remoteSocketAddressLock = new Object();
+  private SocketAddress remoteSocketAddress;
 
   private final Object closeLock = new Object();
   private Long closeTime;
@@ -69,11 +69,11 @@ public abstract class AbstractSocket implements Socket {
       long connectTime,
       SocketAddress remoteSocketAddress
   ) {
-    this.socketContext              = socketContext;
-    this.id                         = id;
-    this.connectTime                = connectTime;
+    this.socketContext = socketContext;
+    this.id = id;
+    this.connectTime = connectTime;
     this.connectRemoteSocketAddress = remoteSocketAddress;
-    this.remoteSocketAddress        = remoteSocketAddress;
+    this.remoteSocketAddress = remoteSocketAddress;
   }
 
   @Override
@@ -124,7 +124,7 @@ public abstract class AbstractSocket implements Socket {
       final SocketAddress oldRemoteSocketAddress = this.remoteSocketAddress;
       if (!newRemoteSocketAddress.equals(oldRemoteSocketAddress)) {
         this.remoteSocketAddress = newRemoteSocketAddress;
-        logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[]{this, oldRemoteSocketAddress, newRemoteSocketAddress});
+        logger.log(Level.FINE, "Enqueuing onRemoteSocketAddressChange: {0}, {1}, {2}", new Object[] {this, oldRemoteSocketAddress, newRemoteSocketAddress});
         listenerManager.enqueueEvent(
             listener -> () -> listener.onRemoteSocketAddressChange(this, oldRemoteSocketAddress, newRemoteSocketAddress)
         );
@@ -218,7 +218,7 @@ public abstract class AbstractSocket implements Socket {
     if (size == 0) {
       throw new IllegalArgumentException("messages may not be empty");
     }
-    logger.log(Level.FINER, "Enqueuing onMessages: {0}, {1} {2}", new Object[]{this, size, (size == 1) ? "message" : "messages"});
+    logger.log(Level.FINER, "Enqueuing onMessages: {0}, {1} {2}", new Object[] {this, size, (size == 1) ? "message" : "messages"});
     return listenerManager.enqueueEvent(
         listener -> () -> listener.onMessages(this, messages)
     );

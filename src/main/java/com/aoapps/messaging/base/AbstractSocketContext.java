@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -233,7 +233,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
     if (isClosed()) {
       throw new IllegalStateException("SocketContext is closed");
     }
-    logger.log(Level.FINE, "Enqueuing onNewSocket: {0}, {1}", new Object[]{this, newSocket});
+    logger.log(Level.FINE, "Enqueuing onNewSocket: {0}, {1}", new Object[] {this, newSocket});
     Future<?> future;
     synchronized (sockets) {
       Identifier id = newSocket.getId();
@@ -246,9 +246,9 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
       );
     }
     try {
-      logger.log(Level.FINER, "Waiting for onNewSocket: {0}, {1}", new Object[]{this, newSocket});
+      logger.log(Level.FINER, "Waiting for onNewSocket: {0}, {1}", new Object[] {this, newSocket});
       future.get();
-      logger.log(Level.FINER, "Finished onNewSocket: {0}, {1}", new Object[]{this, newSocket});
+      logger.log(Level.FINER, "Finished onNewSocket: {0}, {1}", new Object[] {this, newSocket});
     } catch (InterruptedException e) {
       logger.log(Level.FINE, null, e);
       // Restore the interrupted status
