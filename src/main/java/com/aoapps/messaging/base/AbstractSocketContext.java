@@ -171,7 +171,7 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
       } catch (ThreadDeath td) {
         throw td;
       } catch (Throwable t) {
-        logger.log(Level.SEVERE, null, t);
+        logger.log(Level.SEVERE, "TODO: message here", t);
       }
     }
     if (enqueueOnSocketContextClose) {
@@ -184,13 +184,13 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
         future.get();
         logger.log(Level.FINER, "Finished onSocketContextClose: {0}", this);
       } catch (InterruptedException e) {
-        logger.log(Level.FINE, null, e);
+        logger.log(Level.FINE, "TODO: message here", e);
         // Restore the interrupted status
         Thread.currentThread().interrupt();
       } catch (ThreadDeath td) {
         throw td;
       } catch (Throwable t) {
-        logger.log(Level.SEVERE, null, t);
+        logger.log(Level.SEVERE, "TODO: message here", t);
       }
     }
     listenerManager.close();
@@ -250,13 +250,13 @@ public abstract class AbstractSocketContext<S extends AbstractSocket> implements
       future.get();
       logger.log(Level.FINER, "Finished onNewSocket: {0}, {1}", new Object[] {this, newSocket});
     } catch (InterruptedException e) {
-      logger.log(Level.FINE, null, e);
+      logger.log(Level.FINE, "TODO: message here", e);
       // Restore the interrupted status
       Thread.currentThread().interrupt();
     } catch (ThreadDeath td) {
       throw td;
     } catch (Throwable t) {
-      logger.log(Level.SEVERE, null, t);
+      logger.log(Level.SEVERE, "TODO: message here", t);
     }
   }
 
