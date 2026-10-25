@@ -1,6 +1,6 @@
 /*
  * ao-messaging-base - Asynchronous bidirectional messaging over various protocols base for implementations.
- * Copyright (C) 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,7 +21,6 @@
  * along with ao-messaging-base.  If not, see <https://www.gnu.org/licenses/>.
  */
 module com.aoapps.messaging.base {
-  exports com.aoapps.messaging.base;
   // Direct
   requires com.aoapps.collections; // <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
   requires com.aoapps.concurrent; // <groupId>com.aoapps</groupId><artifactId>ao-concurrent</artifactId>
@@ -29,4 +28,6 @@ module com.aoapps.messaging.base {
   requires com.aoapps.security; // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
   // Java SE
   requires java.logging;
+
+  exports com.aoapps.messaging.base;
 }
